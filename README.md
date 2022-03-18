@@ -140,6 +140,10 @@ Swap swaps the position of the keys at indicies i and j\.
 
 ## type Ordered
 
+Ordered represents all orderable types\.
+
+Deprecated: This will be removed when the constraints package is added to the standard library\.
+
 ```go
 type Ordered interface {
     // contains filtered or unexported methods

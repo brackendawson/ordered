@@ -209,9 +209,13 @@ func (m *Map[K, V]) Swap(i, j int) {
 	m.order[i], m.order[j] = m.order[j], m.order[i]
 }
 
+// Ordered represents all orderable types.
+//
+// Deprecated: This will be removed when the constraints package is added to
+// the standard library.
 type Ordered interface {
-	~uint | ~uint16 | ~uint32 | ~uint64 |
-		~int | ~int16 | ~int32 | ~int64 |
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+		~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~float32 | ~float64 |
 		~string
 }
