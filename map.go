@@ -1,7 +1,11 @@
 // ordered contains ordered data structures
 package ordered
 
-import "sync"
+import (
+	"fmt"
+	"reflect"
+	"sync"
+)
 
 // Map is an ordered map data structure that is safe for concurrent use by
 // multiple goroutines without additional locking or coordination.
@@ -197,6 +201,25 @@ func (m *Map[K, V]) StoreFirst(key K, value V) {
 	m.dirty[key] = value
 }
 
+// String formats the map for printing
+func (m *Map[K, V]) String() string {
+	return typeName(m) + m.string()
+}
+
+func (m *Map[K, V]) string() (s string) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	s = "["
+	var space string
+	for i := range m.order {
+		s += space + fmt.Sprint(m.order[i]) + ":" + fmt.Sprint(m.dirty[m.order[i]])
+		space = " "
+	}
+	s += "]"
+	return
+}
+
 // Swap swaps the position of the keys at indicies i and j.
 func (m *Map[K, V]) Swap(i, j int) {
 	m.mu.Lock()
@@ -236,4 +259,14 @@ func (m *SortMap[K, V]) Less(i, j int) bool {
 	}
 
 	return m.order[i] < m.order[j]
+}
+
+// String formats the map for printing
+func (m *SortMap[K, V]) String() string {
+	return typeName(m) + m.string()
+}
+
+func typeName(t any) string {
+	elem := reflect.TypeOf(t).Elem()
+	return elem.PkgPath() + "." + elem.Name()
 }

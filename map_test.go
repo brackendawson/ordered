@@ -1,6 +1,7 @@
 package ordered
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"sort"
@@ -825,6 +826,37 @@ func TestStoreFirst(t *testing.T) {
 			}
 			if !reflect.DeepEqual(m.order, test.wantOrder) {
 				t.Errorf("Unexpected order content\nactual: %#v\nwant  : %#v", m.order, test.wantOrder)
+			}
+		})
+	}
+}
+
+func TestString(t *testing.T) {
+	for name, test := range map[string]struct {
+		object fmt.Stringer
+		want   string
+	}{
+		"Map": {
+			want: "github.com/brackendawson/ordered.Map[string,int][seven:7 nine:9 one:1]",
+			object: &Map[string, int]{
+				order: []string{"seven", "nine", "one"},
+				dirty: map[string]int{"one": 1, "seven": 7, "nine": 9},
+			},
+		},
+		"SortMap": {
+			want: "github.com/brackendawson/ordered.SortMap[float64,bool][6.7:true 1:false -0.2:true]",
+			object: &SortMap[float64, bool]{
+				Map: Map[float64, bool]{
+					order: []float64{6.7, 1, -0.2},
+					dirty: map[float64]bool{6.7: true, 1: false, -0.2: true},
+				},
+			},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			got := test.object.String()
+			if test.want != got {
+				t.Errorf("Not equal:\n\twant: %s\n\tgot : %s", test.want, got)
 			}
 		})
 	}
